@@ -59,6 +59,8 @@ everything else. The policy knowledge base comes from the earlier RAG engagement
 
 ## Architecture
 
+![Animated flow: per-staff tool authorization, injected refund denied](docs/diagrams/architecture-animated.svg)
+
 ```mermaid
 flowchart LR
   staff["Store staff<br/>(store app)"] -->|"sign in"| cognito["Amazon Cognito<br/>user pool"]
