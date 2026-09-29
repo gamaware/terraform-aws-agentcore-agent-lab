@@ -1,0 +1,9 @@
+[
+  {"sku": "HG-TEAK-CHAIR", "store_id": "ST-014", "on_hand": 11, "reserved": 2},
+  {"sku": "HG-TEAK-CHAIR", "store_id": "ST-022", "on_hand": 0, "reserved": 0},
+  {"sku": "HG-LINEN-RUN", "store_id": "ST-014", "on_hand": 34, "reserved": 0},
+  {"sku": "HG-OAK-DESK", "store_id": "ST-014", "on_hand": 1, "reserved": 1},
+  {"sku": "HG-OAK-DESK", "store_id": "ST-022", "on_hand": 4, "reserved": 0},
+  {"sku": "HG-WOOL-THROW", "store_id": "ST-022", "on_hand": 9, "reserved": 1},
+  {"sku": "HG-DESK-LAMP", "store_id": "ST-014", "on_hand": 6, "reserved": 0}
+]

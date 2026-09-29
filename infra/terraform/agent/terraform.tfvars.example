@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars (git-ignored). Values are placeholders.
+region             = "us-east-1"
+container_uri      = "111122223333.dkr.ecr.us-east-1.amazonaws.com/harbor-store-ops-agent@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+ecr_repository_arn = "arn:aws:ecr:us-east-1:111122223333:repository/harbor-store-ops-agent"
+knowledge_base_id  = "" # set to the knowledge base ID from the RAG engagement to enable search_policies
+alarm_actions      = ["arn:aws:sns:us-east-1:111122223333:harbor-store-ops-oncall"]

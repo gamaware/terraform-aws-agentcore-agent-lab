@@ -1,0 +1,11 @@
+permit(
+  principal is AgentCore::OAuthUser,
+  action in [
+    ${read_actions}
+  ],
+  resource == AgentCore::Gateway::"${gateway_arn}"
+) when {
+  principal.hasTag("cognito:groups") &&
+  (principal.getTag("cognito:groups") like "*store-associates*" ||
+   principal.getTag("cognito:groups") like "*store-leads*")
+};

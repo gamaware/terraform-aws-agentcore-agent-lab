@@ -1,0 +1,16 @@
+{
+  "target": "policies",
+  "function": "search-policies",
+  "handler": "harbor_tools.policies.handler",
+  "tool": {
+    "name": "search_policies",
+    "description": "Search the Harbor Goods store policy knowledge base (returns, warranty, shipping). Returns passages with their source.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Question in plain words"}
+      },
+      "required": ["query"]
+    }
+  }
+}

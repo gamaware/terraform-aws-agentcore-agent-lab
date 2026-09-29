@@ -1,0 +1,44 @@
+[
+  {
+    "order_id": "HG-100234",
+    "store_id": "ST-014",
+    "customer_ref": "C-58213",
+    "status": "DELIVERED",
+    "delivered_days_ago": 6,
+    "lines": [
+      {"sku": "HG-TEAK-CHAIR", "description": "Teak dining chair", "quantity": 2, "unit_price_cents": 8900},
+      {"sku": "HG-LINEN-RUN", "description": "Linen table runner", "quantity": 1, "unit_price_cents": 2400}
+    ]
+  },
+  {
+    "order_id": "HG-100241",
+    "store_id": "ST-014",
+    "customer_ref": "C-60177",
+    "status": "SHIPPED",
+    "delivered_days_ago": null,
+    "lines": [
+      {"sku": "HG-OAK-DESK", "description": "Oak writing desk", "quantity": 1, "unit_price_cents": 42900}
+    ]
+  },
+  {
+    "order_id": "HG-100257",
+    "store_id": "ST-022",
+    "customer_ref": "C-61002",
+    "status": "DELIVERED",
+    "delivered_days_ago": 41,
+    "lines": [
+      {"sku": "HG-WOOL-THROW", "description": "Wool throw blanket", "quantity": 1, "unit_price_cents": 6900}
+    ]
+  },
+  {
+    "order_id": "HG-100263",
+    "store_id": "ST-014",
+    "customer_ref": "C-58213",
+    "status": "DELIVERED",
+    "delivered_days_ago": 3,
+    "lines": [
+      {"sku": "HG-OAK-DESK", "description": "Oak writing desk", "quantity": 1, "unit_price_cents": 42900},
+      {"sku": "HG-DESK-LAMP", "description": "Brass desk lamp", "quantity": 1, "unit_price_cents": 5400}
+    ]
+  }
+]

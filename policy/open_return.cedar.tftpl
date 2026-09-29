@@ -1,0 +1,9 @@
+permit(
+  principal is AgentCore::OAuthUser,
+  action == AgentCore::Action::"returns___open_return",
+  resource == AgentCore::Gateway::"${gateway_arn}"
+) when {
+  principal.hasTag("cognito:groups") &&
+  principal.getTag("cognito:groups") like "*store-leads*" &&
+  context.input.refund_cents <= ${refund_limit_cents}
+};

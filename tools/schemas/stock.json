@@ -1,0 +1,17 @@
+{
+  "target": "stock",
+  "function": "check-stock",
+  "handler": "harbor_tools.stock.handler",
+  "tool": {
+    "name": "check_stock",
+    "description": "Check available stock of one SKU in one store (on hand minus reserved).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "sku": {"type": "string", "description": "Harbor Goods SKU, for example HG-TEAK-CHAIR"},
+        "store_id": {"type": "string", "description": "Store ID, for example ST-014"}
+      },
+      "required": ["sku", "store_id"]
+    }
+  }
+}

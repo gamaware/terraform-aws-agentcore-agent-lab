@@ -1,0 +1,16 @@
+{
+  "target": "orders",
+  "function": "get-order",
+  "handler": "harbor_tools.orders.handler",
+  "tool": {
+    "name": "get_order",
+    "description": "Look up a Harbor Goods order by ID. Returns status, store, delivery age and order lines with prices in cents.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {"type": "string", "description": "Order ID, for example HG-100234"}
+      },
+      "required": ["order_id"]
+    }
+  }
+}
