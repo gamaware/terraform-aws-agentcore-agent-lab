@@ -8,6 +8,8 @@ offline.
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Lab](https://img.shields.io/badge/type-lab-5b6b7f)
 
+![AI agents on Amazon Bedrock AgentCore](docs/assets/cover.png)
+
 > **Lab.** Harbor Goods and all data here are fictional. Each repository in this portfolio is a
 > separate engagement with Harbor Goods, a fictional mid-size retailer. Account IDs are AWS documentation examples.
 
@@ -196,7 +198,7 @@ policy knowledge base the agent searches is built in
 [terraform-aws-bedrock-rag-lab](https://github.com/gamaware/terraform-aws-bedrock-rag-lab), and the image pipeline
 follows [aws-ecs-fargate-deploy-lab](https://github.com/gamaware/aws-ecs-fargate-deploy-lab).
 
-## Credits
+### Credits
 
 Built on [awslabs/agentcore-samples](https://github.com/awslabs/agentcore-samples) (Apache-2.0): the runtime role
 trust policy and the log and trace delivery wiring are adapted from its Terraform samples, with attribution in the
