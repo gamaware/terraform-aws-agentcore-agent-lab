@@ -1,0 +1,7 @@
+forbid(
+  principal,
+  action == AgentCore::Action::"returns___open_return",
+  resource == AgentCore::Gateway::"${gateway_arn}"
+) when {
+  context.input.refund_cents > ${refund_limit_cents}
+};

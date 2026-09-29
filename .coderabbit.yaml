@@ -1,0 +1,45 @@
+language: en-US
+reviews:
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "src/harbor_agent/**/*.py"
+      instructions: >-
+        Authorization belongs to the gateway policy engine, not to the prompt or the agent code; flag any change
+        that makes a tool decision depend on model output alone. The deployed runtime must never run in smoke mode.
+        Configuration comes from environment variables set by Terraform.
+    - path: "src/harbor_tools/**/*.py"
+      instructions: >-
+        Tool handlers validate every argument, return {"ok": false, "error": ...} for business refusals and raise
+        only on unexpected failures. open_return must keep its own limit, window, line-total and duplicate checks.
+    - path: "policy/**"
+      instructions: >-
+        Cedar policies are deny by default and scoped to the gateway ARN. Every change needs a case in
+        policy/cases.yaml. Refund amounts are integers in cents.
+    - path: "tools/schemas/*.json"
+      instructions: >-
+        These files are the contract between Terraform, the Lambda handlers and the policies. Property types must
+        stay within string, integer, number and boolean.
+    - path: "agent/Dockerfile"
+      instructions: >-
+        Base images must stay pinned by digest. The runtime stage must stay non-root, arm64 and without pip.
+    - path: "infra/terraform/**/*.tf"
+      instructions: >-
+        Check IAM access is scoped to what each role needs, the runtime stays in VPC mode with no internet path,
+        everything is encrypted with the stack key, and every Checkov skip carries a reason next to the resource.
+        New behavior needs a terraform test assertion.
+    - path: "infra/terraform/**/tests/*.tftest.hcl"
+      instructions: >-
+        Tests must use mock_provider only and must not reach AWS.
+    - path: ".github/workflows/*.yml"
+      instructions: >-
+        Actions pinned by full SHA, permissions {} at workflow level, timeout-minutes on every job, event data
+        through env. Pull request workflows must never get id-token or AWS credentials.
+    - path: "**/*.sh"
+      instructions: >-
+        Must pass shellcheck and shellharden; quote variables; use arrays for arguments.
+    - path: "**/*.md"
+      instructions: >-
+        Lines up to 120 characters (tables exempt). Fictional names only (Harbor Goods, example.com, AWS
+        documentation account IDs). No dates.

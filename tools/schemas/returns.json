@@ -1,0 +1,20 @@
+{
+  "target": "returns",
+  "function": "open-return",
+  "handler": "harbor_tools.returns.handler",
+  "tool": {
+    "name": "open_return",
+    "description": "Open a return for one order line. The refund is in cents and cannot exceed the line total. Look up the order first.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {"type": "string", "description": "Order ID"},
+        "sku": {"type": "string", "description": "SKU of the returned line"},
+        "quantity": {"type": "integer", "description": "Units returned"},
+        "refund_cents": {"type": "integer", "description": "Refund amount in cents"},
+        "reason": {"type": "string", "description": "Short reason given by the customer"}
+      },
+      "required": ["order_id", "sku", "quantity", "refund_cents", "reason"]
+    }
+  }
+}

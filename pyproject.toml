@@ -1,0 +1,60 @@
+[project]
+name = "harbor-store-ops-agent"
+version = "0.1.0"
+description = "Harbor Goods store-operations agent on Amazon Bedrock AgentCore"
+license = "MIT"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "aws-opentelemetry-distro>=0.12",
+  "bedrock-agentcore>=1.24",
+  "boto3>=1.43",
+  "strands-agents>=1.57",
+]
+
+[dependency-groups]
+dev = [
+  "cedarpy>=4.12",
+  "jsonschema>=4.25",
+  "moto[dynamodb]>=5.2",
+  "mypy>=2.3",
+  "pytest>=9",
+  "pyyaml>=6",
+  "ruff>=0.16",
+  "types-jsonschema",
+  "types-pyyaml",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/harbor_agent", "src/harbor_tools"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+pythonpath = ["src", "tests", "scripts"]
+# Deprecations raised inside third-party packages, not in this code.
+filterwarnings = [
+  "ignore::DeprecationWarning:bedrock_agentcore",
+  "ignore::pydantic.warnings.PydanticDeprecatedSince20",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "PL", "C4", "PT"]
+ignore = ["PLR2004"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "PLR0913"]
+
+[tool.mypy]
+python_version = "3.13"
+files = ["src", "scripts"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+check_untyped_defs = true

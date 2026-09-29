@@ -1,0 +1,31 @@
+# Secrets
+.env
+.env.local
+*.pem
+*.key
+credentials.json
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+backend.tf
+*.tfvars
+!*.tfvars.example
+.terraform.tfstate.lock.info
+.build/
+
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Tools
+.firecrawl/
+.DS_Store
+styles/

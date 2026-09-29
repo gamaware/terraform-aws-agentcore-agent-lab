@@ -1,0 +1,11 @@
+# Copy to backend.tf and fill in, or pass the values with
+# `terraform init -backend-config=...`. S3 native locking needs no DynamoDB.
+terraform {
+  backend "s3" {
+    bucket       = "YOUR_STATE_BUCKET"
+    key          = "harbor-store-ops-agent/agent.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}

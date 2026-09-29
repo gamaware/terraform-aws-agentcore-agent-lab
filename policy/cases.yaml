@@ -1,0 +1,64 @@
+# Authorization table for the gateway policies. tests/test_policy.py renders the
+# same templates Terraform uploads and evaluates every case with the Cedar engine.
+# Refund limit used by these cases: 20000 cents (USD 200), the Terraform default.
+cases:
+  - name: associate reads an order
+    groups: store-associates
+    action: orders___get_order
+    input: {order_id: HG-100234}
+    decision: allow
+  - name: associate checks stock
+    groups: store-associates
+    action: stock___check_stock
+    input: {sku: HG-OAK-DESK, store_id: ST-014}
+    decision: allow
+  - name: associate searches policies
+    groups: store-associates
+    action: policies___search_policies
+    input: {query: return window for furniture}
+    decision: allow
+  - name: associate cannot open a return
+    groups: store-associates
+    action: returns___open_return
+    input: {order_id: HG-100234, sku: HG-TEAK-CHAIR, quantity: 1, refund_cents: 8900, reason: wobbly leg}
+    decision: deny
+  - name: lead opens a return under the limit
+    groups: store-leads
+    action: returns___open_return
+    input: {order_id: HG-100234, sku: HG-TEAK-CHAIR, quantity: 1, refund_cents: 8900, reason: wobbly leg}
+    decision: allow
+  - name: lead opens a return exactly at the limit
+    groups: store-leads
+    action: returns___open_return
+    input: {order_id: HG-100234, sku: HG-TEAK-CHAIR, quantity: 2, refund_cents: 20000, reason: wrong finish}
+    decision: allow
+  - name: lead cannot refund one cent above the limit
+    groups: store-leads
+    action: returns___open_return
+    input: {order_id: HG-100263, sku: HG-OAK-DESK, quantity: 1, refund_cents: 20001, reason: damaged top}
+    decision: deny
+  - name: lead cannot refund a desk above the limit
+    groups: store-leads
+    action: returns___open_return
+    input: {order_id: HG-100263, sku: HG-OAK-DESK, quantity: 1, refund_cents: 42900, reason: damaged top}
+    decision: deny
+  - name: lead reads an order
+    groups: store-leads
+    action: orders___get_order
+    input: {order_id: HG-100263}
+    decision: allow
+  - name: user without a store group is denied everything
+    groups: marketing
+    action: stock___check_stock
+    input: {sku: HG-OAK-DESK, store_id: ST-014}
+    decision: deny
+  - name: user with no groups claim is denied
+    groups: null
+    action: orders___get_order
+    input: {order_id: HG-100234}
+    decision: deny
+  - name: unknown tool is denied by default
+    groups: store-leads
+    action: returns___delete_return
+    input: {return_id: HG-100234#HG-TEAK-CHAIR}
+    decision: deny
