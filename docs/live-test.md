@@ -36,9 +36,11 @@ Replace the example ID with the sandbox account's ID. `LIVE_YES=1` skips the con
    unreserved tool concurrency, 30-day logs), then applies it.
 4. Seeds the orders and stock tables from `data/`.
 5. Creates a throwaway store associate and store lead, signs them in and sends five prompts to the `live`
-   endpoint. It fails if a call without a token is accepted, if any prompt gets a non-200 answer, or if a return
-   exists that only the lead's under-limit request should have opened.
-6. Destroys both stacks and lists anything still tagged with the run ID.
+   endpoint. It fails if a call without a token is accepted, if any prompt gets a non-200 answer or an
+   application error inside a 200, if a prompt never runs its expected tool successfully, if a denied return
+   succeeds, or if the returns table does not hold exactly the lead's under-limit return.
+6. Destroys both stacks and lists anything still tagged with the run ID. If a destroy fails, the script keeps the
+   temporary work directory with both Terraform states, prints the retry commands and exits non-zero.
 
 ## Cost
 

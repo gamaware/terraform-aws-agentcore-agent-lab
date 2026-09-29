@@ -51,3 +51,28 @@ def test_every_policy_is_scoped_to_the_gateway() -> None:
 def test_another_gateway_gets_nothing() -> None:
     other = GATEWAY_ARN.replace("abcdefghij", "zzzzzzzzzz")
     assert not authorize(POLICIES, ["store-leads"], "orders___get_order", {"order_id": "HG-100234"}, other)
+
+
+@pytest.mark.parametrize(
+    "targets",
+    [{"orders", "stock", "returns"}, {"orders", "stock", "returns", "policies"}],
+    ids=["no-knowledge-base", "with-knowledge-base"],
+)
+def test_policies_name_only_actions_of_deployed_targets(targets: set[str]) -> None:
+    """AgentCore rejects a policy that names an undefined action. Without a knowledge base there is no
+    policies target, so search_policies must not appear in any rendered policy."""
+    deployed = {f"{s['target']}___{s['tool']['name']}" for s in load_schemas() if s["target"] in targets}
+    rendered = render_policies(targets=targets)
+    named = set(re.findall(r'AgentCore::Action::"([^"]+)"', rendered))
+    assert named <= deployed
+    assert ("policies___search_policies" in named) == ("policies" in targets)
+    associate = ["store-associates"]
+    assert authorize(rendered, associate, "orders___get_order", {"order_id": "HG-100234"})
+
+
+def test_read_policy_takes_its_actions_from_terraform() -> None:
+    text = (ROOT / "policy" / "read_tools.cedar.tftpl").read_text()
+    assert "${read_actions}" in text
+    assert "AgentCore::Action::" not in text
+    policy_tf = (ROOT / "infra" / "terraform" / "agent" / "policy.tf").read_text()
+    assert "depends_on = [aws_bedrockagentcore_gateway_target.tool]" in policy_tf

@@ -32,12 +32,34 @@ def load_schemas() -> list[dict[str, Any]]:
     return [json.loads(p.read_text()) for p in sorted((ROOT / "tools" / "schemas").glob("*.json"))]
 
 
-def render_policies(gateway_arn: str = GATEWAY_ARN, refund_limit_cents: int = REFUND_LIMIT_CENTS) -> str:
-    """Render policy/*.cedar.tftpl exactly as Terraform's templatefile() does for these two variables."""
+WRITE_TARGETS = ("returns",)
+
+
+def read_actions(targets: set[str] | None = None) -> list[str]:
+    """The read tools' action names, as locals.read_actions in policy.tf builds them for deployed targets."""
+    return sorted(
+        f"{s['target']}___{s['tool']['name']}"
+        for s in load_schemas()
+        if s["target"] not in WRITE_TARGETS and (targets is None or s["target"] in targets)
+    )
+
+
+def render_policies(
+    gateway_arn: str = GATEWAY_ARN, refund_limit_cents: int = REFUND_LIMIT_CENTS, targets: set[str] | None = None
+) -> str:
+    """Render policy/*.cedar.tftpl exactly as Terraform's templatefile() does in policy.tf.
+
+    ``targets`` is the set of deployed gateway targets (default: all schemas, as with a knowledge base).
+    """
+    actions = ",\n    ".join(f'AgentCore::Action::"{a}"' for a in read_actions(targets))
     rendered = []
     for path in sorted((ROOT / "policy").glob("*.cedar.tftpl")):
         text = path.read_text()
-        text = text.replace("${gateway_arn}", gateway_arn).replace("${refund_limit_cents}", str(refund_limit_cents))
+        text = (
+            text.replace("${gateway_arn}", gateway_arn)
+            .replace("${refund_limit_cents}", str(refund_limit_cents))
+            .replace("${read_actions}", actions)
+        )
         assert "${" not in text, f"{path.name} has a template variable the harness does not render"
         rendered.append(text)
     return "\n".join(rendered)

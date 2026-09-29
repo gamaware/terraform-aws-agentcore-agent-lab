@@ -39,7 +39,7 @@ smoke: ## Run the image under the AgentCore runtime contract and probe /ping and
 tf-fmt: ## Rewrite Terraform files to canonical format
 	terraform fmt -recursive infra/terraform
 
-tf-verify: ## fmt check, validate, tflint and mocked terraform test for each stack
+tf-verify: ## fmt check, validate, tflint and mocked terraform test per stack, then import the tools from the built ZIP
 	terraform fmt -check -recursive infra/terraform
 	for stack in $(TF_STACKS); do \
 	  echo "--- $$stack"; \
@@ -48,6 +48,7 @@ tf-verify: ## fmt check, validate, tflint and mocked terraform test for each sta
 	  (cd $$stack && tflint --init --config=$(TFLINT_CONFIG) > /dev/null && tflint --config=$(TFLINT_CONFIG)); \
 	  terraform -chdir=$$stack test; \
 	done
+	uv run --frozen scripts/check_tool_package.py infra/terraform/agent/.build/harbor_tools.zip
 
 hadolint: ## Lint the Dockerfile
 	hadolint agent/Dockerfile

@@ -1,9 +1,7 @@
 permit(
   principal is AgentCore::OAuthUser,
   action in [
-    AgentCore::Action::"orders___get_order",
-    AgentCore::Action::"stock___check_stock",
-    AgentCore::Action::"policies___search_policies"
+    ${read_actions}
   ],
   resource == AgentCore::Gateway::"${gateway_arn}"
 ) when {

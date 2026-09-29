@@ -1,20 +1,26 @@
-# Unit prices, us-east-1, on-demand, USD. Sources are the public AWS pricing pages below.
-# Re-check them before quoting a client; the cost model reads only this file.
+# Unit prices, us-east-1, on-demand, USD. Sources are the official AWS pricing pages below; each price names
+# its source key. Re-check them before quoting a client; the cost model reads only this file.
 sources:
-  bedrock: https://aws.amazon.com/bedrock/pricing/
+  bedrock: https://aws.amazon.com/bedrock/pricing/   # Amazon Nova, Standard tier, per 1M tokens; guardrails
   agentcore: https://aws.amazon.com/bedrock/agentcore/pricing/
   lambda: https://aws.amazon.com/lambda/pricing/
   dynamodb: https://aws.amazon.com/dynamodb/pricing/on-demand/
   privatelink: https://aws.amazon.com/privatelink/pricing/
 prices:
-  nova_lite_input_per_1m_tokens: 0.30
-  nova_lite_output_per_1m_tokens: 1.20
-  guardrail_per_1k_text_units: 0.15      # content filters and denied topics; 1 text unit = up to 1,000 characters
-  runtime_per_vcpu_hour: 0.0895          # active CPU time only
-  runtime_per_gb_hour: 0.00945           # memory, for the session's active time
-  gateway_per_1k_calls: 0.005            # tool invocations (MCP tools/call)
-  memory_per_1k_short_term_events: 0.25
-  memory_per_1k_long_term_records_stored_month: 0.75   # built-in strategy
+  nova_lite_input_per_1m_tokens: 0.06   # bedrock: Amazon Nova Lite (v1), not Nova 2 Lite
+  nova_lite_output_per_1m_tokens: 0.24  # bedrock
+  # bedrock: Guardrails, per 1,000 text units (1 text unit = up to 1,000 characters). guardrail.tf configures
+  # content filters, denied topics and PII filters, and each is charged.
+  guardrail_content_filters_per_1k_text_units: 0.15
+  guardrail_denied_topics_per_1k_text_units: 0.15
+  guardrail_sensitive_info_per_1k_text_units: 0.10
+  runtime_per_vcpu_hour: 0.0895          # agentcore: active CPU time only
+  runtime_per_gb_hour: 0.00945           # agentcore: memory, for the session's active time
+  gateway_per_1k_calls: 0.005            # agentcore: tool invocations (MCP tools/call)
+  memory_per_1k_short_term_events: 0.25  # agentcore
+  memory_per_1k_long_term_records_stored_month: 0.75   # agentcore: built-in strategy
+  memory_per_1k_long_term_retrievals: 0.50             # agentcore: per memory record retrieved
+  policy_per_authorization_request: 0.000025           # agentcore: AgentCore Policy, per authorization request
   lambda_per_1m_requests: 0.20
   lambda_per_gb_second: 0.0000133334     # arm64
   dynamodb_per_1m_read_units: 0.125
@@ -33,6 +39,8 @@ session_profile:
   runtime_session_seconds: 300           # memory is billed while the session stays alive
   runtime_gb: 2
   long_term_records_per_session: 0.2
+  memory_records_retrieved_per_turn: 3   # one preference search per turn, topK 3 (src/harbor_agent/memory.py)
+  policy_authorizations_per_tool_call: 1 # the gateway's policy engine authorizes every tools/call
   lambda_ms_per_tool_call: 120
   lambda_gb: 0.25
   dynamodb_reads_per_tool_call: 1

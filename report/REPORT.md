@@ -14,7 +14,7 @@ risks that remain.
   order lookup, it follows an injected instruction to refund USD 500, and it loops on one tool.
 - No refund above the USD 200 limit and no return by a staff member outside the store-leads group reached the
   returns table. The gateway policy engine denied them before any Lambda function ran.
-- The estimated variable cost is USD 11.19 per 1,000 sessions on Amazon Nova Lite. The fixed cost is the private
+- The estimated variable cost is USD 11.76 per 1,000 sessions on Amazon Nova Lite. The fixed cost is the private
   network: USD 102.20 a month for seven interface endpoints in two Availability Zones.
 
 ## How the evidence was produced
@@ -78,26 +78,33 @@ per model call, 300 seconds of session time at 2 GB, us-east-1 on-demand prices.
 
 | Item | Usage per 1,000 sessions | USD |
 | --- | --- | --- |
-| Model input (Nova Lite) | 19.50M tokens | 5.85 |
-| Model output (Nova Lite) | 0.90M tokens | 1.08 |
-| Guardrail | 6,000 text units | 0.90 |
+| Model input (Nova Lite) | 19.50M tokens | 1.17 |
+| Model output (Nova Lite) | 0.90M tokens | 0.22 |
+| Guardrail | 6,000 text units | 2.40 |
 | Runtime CPU | 1.25 vCPU-hours | 0.11 |
 | Runtime memory | 166.7 GB-hours | 1.57 |
 | Gateway | 4,500 tool calls | 0.02 |
 | Memory events | 6,000 events | 1.50 |
 | Memory preference records | 200 records-month | 0.15 |
+| Memory preference retrievals | 9,000 records retrieved | 4.50 |
+| Policy authorizations | 4,500 requests | 0.11 |
 | Lambda tools | 4,500 requests, 135 GB-s | 0.00 |
 | DynamoDB | 4,500 reads, 300 writes | 0.00 |
-| **Total** | | **11.19** |
+| **Total** | | **11.76** |
 
 Fixed: Interface VPC endpoints, 14 endpoint-AZs x 730 h: USD 102.20 a month.
 
-- The model is 62 percent of the variable cost. Claude Haiku as the production model raises the model lines by
-  roughly 3 to 4 times; the rest does not change.
+- Memory preference retrievals are the largest line (38 percent): every turn searches staff preferences and is
+  billed per record returned, up to three. Searching once per session instead of once per turn cuts that line by
+  two thirds.
+- Nova Lite is 12 percent of the variable cost. A larger production model changes only the two model lines;
+  re-price them from the Amazon Bedrock pricing page.
+- Guardrail pricing counts each configured safeguard (content filters, denied topics, PII filters) on every text
+  unit, and AgentCore Policy charges one authorization request per tool call.
 - The model counts runtime memory for the whole 300-second session, not only while the agent computes, which is
   the conservative reading of the pricing page. A shorter idle timeout (`idle_runtime_session_timeout`, 900
   seconds in this stack) bounds it.
-- The endpoints dominate at low volume: below about 9,000 sessions a month they cost more than all the sessions.
+- The endpoints dominate at low volume: below about 8,700 sessions a month they cost more than all the sessions.
   Sharing the endpoints with other workloads in the same VPC is the main saving.
 
 ## Risks and recommendations

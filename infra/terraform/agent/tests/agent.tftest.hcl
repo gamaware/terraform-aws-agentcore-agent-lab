@@ -215,6 +215,16 @@ run "targets_follow_the_tool_schemas" {
   }
 
   assert {
+    condition     = !strcontains(aws_bedrockagentcore_policy.tools["read_tools.cedar.tftpl"].definition[0].cedar[0].statement, "policies___search_policies")
+    error_message = "Without a knowledge base the read policy must not name search_policies: AgentCore rejects undefined actions."
+  }
+
+  assert {
+    condition     = strcontains(aws_bedrockagentcore_policy.tools["read_tools.cedar.tftpl"].definition[0].cedar[0].statement, "AgentCore::Action::\"orders___get_order\",\n    AgentCore::Action::\"stock___check_stock\"")
+    error_message = "The read policy must name get_order and check_stock."
+  }
+
+  assert {
     condition     = aws_bedrockagentcore_gateway_target.tool["returns"].target_configuration[0].mcp[0].lambda[0].tool_schema[0].inline_payload[0].name == "open_return"
     error_message = "The returns target must expose open_return."
   }
@@ -250,6 +260,11 @@ run "knowledge_base_adds_the_policy_search_tool" {
   assert {
     condition     = contains(keys(aws_bedrockagentcore_gateway_target.tool), "policies")
     error_message = "A knowledge base ID must add the search_policies target."
+  }
+
+  assert {
+    condition     = strcontains(aws_bedrockagentcore_policy.tools["read_tools.cedar.tftpl"].definition[0].cedar[0].statement, "AgentCore::Action::\"policies___search_policies\"")
+    error_message = "With a knowledge base the read policy must permit search_policies."
   }
 
   assert {

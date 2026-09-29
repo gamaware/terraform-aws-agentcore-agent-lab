@@ -34,11 +34,20 @@ locals {
   }
 }
 
+# The handlers are harbor_tools.<module>.handler and the modules import harbor_tools.common, so the ZIP keeps
+# the package directory: harbor_tools/__init__.py, harbor_tools/orders.py, ... (scripts/check_tool_package.py
+# imports every handler from the built ZIP after `terraform test`).
 data "archive_file" "tools" {
   type        = "zip"
-  source_dir  = local.tools_src
   output_path = "${path.module}/.build/harbor_tools.zip"
-  excludes    = ["__pycache__", "**/__pycache__/**"]
+
+  dynamic "source" {
+    for_each = fileset(local.tools_src, "*.py")
+    content {
+      content  = file("${local.tools_src}/${source.value}")
+      filename = "harbor_tools/${source.value}"
+    }
+  }
 }
 
 resource "aws_cloudwatch_log_group" "tool" {

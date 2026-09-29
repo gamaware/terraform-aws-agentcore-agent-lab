@@ -25,7 +25,7 @@ route. Reach AWS services through VPC endpoints:
 ## Consequences
 
 - The fixed cost is about USD 102 a month for seven endpoints in two zones, more than the variable cost below
-  roughly 9,000 sessions a month. Sharing the endpoints with other private workloads is the main saving.
+  roughly 8,700 sessions a month. Sharing the endpoints with other private workloads is the main saving.
 - A new AWS service used by the agent needs a new endpoint, or the call fails; the failure is loud, not silent.
 - The tool Lambdas are outside the VPC (they call DynamoDB and Bedrock over IAM-authenticated endpoints), which
   keeps the endpoint count down.

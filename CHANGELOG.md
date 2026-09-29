@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- The tool Lambda ZIP keeps the `harbor_tools/` package directory, so `harbor_tools.<module>.handler` imports;
+  `make tf-verify` imports every handler from the Terraform-built ZIP.
+- The read-tools Cedar policy names only deployed targets (no `search_policies` without a knowledge base), and
+  policies are created after the gateway targets.
+- The tool-call limit ends the turn after the call over the limit instead of returning an error to the model.
+- The live test requires the expected return and successful turn payloads, and a failed destroy keeps the
+  Terraform state and exits non-zero.
+- Cost model: Nova Lite at USD 0.06 and 0.24 per million tokens, every configured guardrail safeguard priced, and
+  memory retrievals and policy authorizations added.
+
 ### Added
 
 - Store-operations agent (Strands Agents) for AgentCore Runtime: `/invocations` and `/ping` on port 8080, the

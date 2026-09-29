@@ -4,7 +4,8 @@ These are workflow rules, not authorization (the gateway policy engine owns auth
 
 - ``open_return`` needs a successful ``get_order`` for the same order earlier in this turn, so the refund
   is based on the order the tool returned, not on what the user typed.
-- A turn may make at most ``max_tool_calls`` tool calls, which stops a looping model.
+- A turn may make at most ``max_tool_calls`` tool calls. The first call over the limit is cancelled and the
+  turn ends after that tool batch, without another model call, so a looping model is stopped rather than told.
 
 Every decision is logged as one JSON line, which ends up in the runtime's application logs.
 """
@@ -16,7 +17,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from strands.hooks import AfterToolCallEvent, BeforeToolCallEvent, HookProvider, HookRegistry
+from strands.hooks import AfterToolCallEvent, AfterToolsEvent, BeforeToolCallEvent, HookProvider, HookRegistry
 
 LOG = logging.getLogger("harbor_agent.guard")
 
@@ -39,11 +40,17 @@ class ToolGuard(HookProvider):
     session_id: str = ""
     calls: list[ToolCall] = field(default_factory=list)
     verified_orders: set[str] = field(default_factory=set)
+    limit_reached: bool = False
     _pending: dict[str, ToolCall] = field(default_factory=dict)
+
+    @property
+    def limit_message(self) -> str:
+        return f"Stopped: tool call limit of {self.max_tool_calls} reached for this request."
 
     def register_hooks(self, registry: HookRegistry, **kwargs: Any) -> None:
         registry.add_callback(BeforeToolCallEvent, self.before)
         registry.add_callback(AfterToolCallEvent, self.after)
+        registry.add_callback(AfterToolsEvent, self.after_tools)
 
     def _log(self, event: str, call: ToolCall, **fields: Any) -> None:
         record = {"event": event, "session_id": self.session_id, "tool": call.tool, "outcome": call.outcome, **fields}
@@ -63,6 +70,7 @@ class ToolGuard(HookProvider):
 
     def _block_reason(self, call: ToolCall) -> str | None:
         if len(self.calls) > self.max_tool_calls:
+            self.limit_reached = True
             return f"tool call limit of {self.max_tool_calls} reached for this request"
         if call.tool == "open_return":
             order_id = call.input.get("order_id")
@@ -80,6 +88,12 @@ class ToolGuard(HookProvider):
         if succeeded and call.tool == "get_order" and isinstance(call.input.get("order_id"), str):
             self.verified_orders.add(call.input["order_id"])
         self._log("tool_call", call)
+
+    def after_tools(self, event: AfterToolsEvent) -> None:
+        """End the turn after the batch that crossed the limit: the model is not called again."""
+        if self.limit_reached:
+            event.end_turn = self.limit_message
+            LOG.info(json.dumps({"event": "turn_stopped", "session_id": self.session_id, "reason": "tool_call_limit"}))
 
 
 def _refused(result: Any) -> bool:

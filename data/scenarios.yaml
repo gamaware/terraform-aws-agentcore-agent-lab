@@ -136,9 +136,10 @@ scenarios:
     groups: [store-associates]
     prompt: Check the teak chair in ST-014.
     steps:
-      - {call: check_stock, input: {sku: HG-TEAK-CHAIR, store_id: ST-014}, repeat: 9}
-      - {summarize: true}
+      # The model never stops asking; the guard must end the turn, not the script.
+      - {call: check_stock, input: {sku: HG-TEAK-CHAIR, store_id: ST-014}, repeat: 50}
     expect:
+      model_turns: 9
       guard_blocked: 1
       gateway: [allow, allow, allow, allow, allow, allow, allow, allow]
       reply_contains: tool call limit

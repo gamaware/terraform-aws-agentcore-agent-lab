@@ -41,6 +41,9 @@ def per_1000_sessions(data: dict[str, Any]) -> list[Line]:
     vcpu_hours = turns * s["runtime_active_cpu_seconds_per_turn"] * s["runtime_vcpu"] / 3600
     gb_hours = n * s["runtime_session_seconds"] * s["runtime_gb"] / 3600
     events = turns * 2
+    guardrail_per_1k = sum(v for k, v in p.items() if k.startswith("guardrail_"))
+    retrievals = turns * s["memory_records_retrieved_per_turn"]
+    authorizations = tool_calls * s["policy_authorizations_per_tool_call"]
     lambda_gb_s = tool_calls * s["lambda_ms_per_tool_call"] / 1000 * s["lambda_gb"]
     return [
         Line(
@@ -56,7 +59,7 @@ def per_1000_sessions(data: dict[str, Any]) -> list[Line]:
         Line(
             "Guardrail",
             f"{turns * s['guardrail_text_units_per_turn']:,.0f} text units",
-            turns * s["guardrail_text_units_per_turn"] / 1000 * p["guardrail_per_1k_text_units"],
+            turns * s["guardrail_text_units_per_turn"] / 1000 * guardrail_per_1k,
         ),
         Line("Runtime CPU", f"{vcpu_hours:.2f} vCPU-hours", vcpu_hours * p["runtime_per_vcpu_hour"]),
         Line("Runtime memory", f"{gb_hours:.1f} GB-hours", gb_hours * p["runtime_per_gb_hour"]),
@@ -66,6 +69,16 @@ def per_1000_sessions(data: dict[str, Any]) -> list[Line]:
             "Memory preference records",
             f"{n * s['long_term_records_per_session']:,.0f} records-month",
             n * s["long_term_records_per_session"] / 1000 * p["memory_per_1k_long_term_records_stored_month"],
+        ),
+        Line(
+            "Memory preference retrievals",
+            f"{retrievals:,.0f} records retrieved",
+            retrievals / 1000 * p["memory_per_1k_long_term_retrievals"],
+        ),
+        Line(
+            "Policy authorizations",
+            f"{authorizations:,.0f} requests",
+            authorizations * p["policy_per_authorization_request"],
         ),
         Line(
             "Lambda tools",

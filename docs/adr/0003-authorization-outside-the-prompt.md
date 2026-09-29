@@ -20,7 +20,7 @@ Enforce authorization in three layers, none of which is the prompt.
    `context.input.refund_cents <= refund_limit_cents`; a `forbid` policy repeats the limit so a future `permit`
    cannot widen it. Refunds are integers in cents because Cedar compares integers.
 2. **Tool guard in the agent (workflow rules).** A Strands hook blocks `open_return` unless `get_order` succeeded
-   for the same order in the same turn, and stops a turn after eight tool calls.
+   for the same order in the same turn, and ends a turn after eight tool calls without calling the model again.
 3. **Business checks in the tool.** `open_return` repeats the limit and checks the return window, the line total
    and duplicates, so a policy mistake or a direct invocation still cannot open a bad return.
 

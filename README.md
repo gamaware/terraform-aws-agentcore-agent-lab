@@ -183,7 +183,7 @@ set timeouts. Pull request jobs get no cloud access.
   services as OpenAPI gateway targets instead of tables, code signing for the tool functions, an AWS Config rule on
   the gateway's policy mode, a retention period for session memory agreed with the privacy team, and an evaluation
   step on real traffic (AgentCore Evaluations).
-- **Cost to run:** about USD 11 per 1,000 staff sessions on Amazon Nova Lite, plus about USD 102 a month for the
+- **Cost to run:** about USD 12 per 1,000 staff sessions on Amazon Nova Lite, plus about USD 102 a month for the
   seven interface endpoints in two zones, in `us-east-1` (see the report).
 
 ## Related work
