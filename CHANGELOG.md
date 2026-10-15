@@ -43,3 +43,6 @@ All notable changes to this project are documented here. The format follows
 ### Security
 
 - Shared reusable workflows from `gamaware/.github` are called pinned to a full commit SHA.
+- The Trivy gate failed on HIGH Debian findings in the base image (CVE-2026-103111 in `libpcre2-8-0`,
+  CVE-2026-84782 in OpenSSL). The `python:3.13-slim-trixie` digest now points at the rebuild that ships the
+  patched packages.
