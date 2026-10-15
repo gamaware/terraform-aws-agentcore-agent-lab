@@ -192,9 +192,8 @@ set timeouts. Pull request jobs get no cloud access.
 
 ## Related work
 
-Part of the [AWS DevOps portfolio](https://github.com/gamaware/aws-devops-portfolio), under the service
-[AI agents on Amazon Bedrock AgentCore on Upwork](https://www.upwork.com/freelancers/~014b3520cf9e140103). The store
-policy knowledge base the agent searches is built in
+Part of the [AWS DevOps portfolio](https://github.com/gamaware/aws-devops-portfolio). The store policy knowledge
+base the agent searches is built in
 [terraform-aws-bedrock-rag-lab](https://github.com/gamaware/terraform-aws-bedrock-rag-lab), and the image pipeline
 follows [aws-ecs-fargate-deploy-lab](https://github.com/gamaware/aws-ecs-fargate-deploy-lab).
 
