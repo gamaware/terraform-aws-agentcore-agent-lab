@@ -9,6 +9,8 @@ updates:
     groups:
       actions:
         patterns: ["*"]
+      github-actions-all:
+        patterns: ["*"]
 
   # Base image digests in agent/Dockerfile (build and runtime stages).
   - package-ecosystem: docker
@@ -17,6 +19,9 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      docker-all:
+        patterns: ["*"]
 
   - package-ecosystem: uv
     directory: /
@@ -27,6 +32,8 @@ updates:
     groups:
       python:
         patterns: ["*"]
+      uv-all:
+        patterns: ["*"]
 
   - package-ecosystem: terraform
     directories:
@@ -36,3 +43,7 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      terraform-all:
+        group-by: dependency-name
+        patterns: ["*"]
