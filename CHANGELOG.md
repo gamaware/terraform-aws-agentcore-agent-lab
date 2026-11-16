@@ -46,3 +46,7 @@ All notable changes to this project are documented here. The format follows
 - The Trivy gate failed on HIGH Debian findings in the base image (CVE-2026-103111 in `libpcre2-8-0`,
   CVE-2026-84782 in OpenSSL). The `python:3.13-slim-trixie` digest now points at the rebuild that ships the
   patched packages.
+- The Trivy gates failed again on HIGH Debian findings (CVE-2026-109518 in `apt`, CVE-2026-76844 and
+  CVE-2026-85091 in `zlib1g`) and a CRITICAL `certifi` advisory (GHSA-6q48-6c7w-9gw2). Both stages use the
+  current `python:3.13-slim-trixie` digest, the runtime stage applies pending Debian security upgrades, and
+  `certifi` is locked at 2026.10.23.
