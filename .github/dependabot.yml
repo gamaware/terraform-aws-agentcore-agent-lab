@@ -9,8 +9,6 @@ updates:
     groups:
       actions:
         patterns: ["*"]
-      github-actions-all:
-        patterns: ["*"]
 
   # Base image digests in agent/Dockerfile (build and runtime stages).
   - package-ecosystem: docker
@@ -22,6 +20,7 @@ updates:
     groups:
       docker-all:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: uv
     directory: /
@@ -31,8 +30,6 @@ updates:
       default-days: 7
     groups:
       python:
-        patterns: ["*"]
-      uv-all:
         patterns: ["*"]
 
   - package-ecosystem: terraform
@@ -45,5 +42,5 @@ updates:
       default-days: 7
     groups:
       terraform-all:
-        group-by: dependency-name
         patterns: ["*"]
+        update-types: ["minor", "patch"]
